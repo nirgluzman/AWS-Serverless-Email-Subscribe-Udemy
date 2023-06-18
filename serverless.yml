@@ -37,6 +37,7 @@ provider:
     REGION: ${self:custom.region}
     QUOTES_BUCKET: ${self:custom.bucketName}
     USERS_TABLE: ${self:custom.tableName}
+    SNS_TOPIC_ARN: !Ref QuotesMessages
 
 functions:
   quotes:
@@ -53,6 +54,14 @@ functions:
     events:
       - http:
           path: subscribe
+          method: post
+          cors: true
+  staticMailer:
+    handler: handler/staticMailer.staticMailer
+    description: publish subscriber info to SNS topic
+    events:
+      - http:
+          path: static-mailer
           method: post
           cors: true
 

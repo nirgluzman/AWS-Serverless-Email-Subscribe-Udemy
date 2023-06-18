@@ -11,3 +11,13 @@ Content-Type: application/json
 {
    "email": "metoo@me.com"
 }
+
+###
+POST {{url}}/static-mailer
+Content-Type: application/json
+
+{
+   "email": "gluzman.nir@gmail.com",
+   "name": "nir",
+   "message": "please subscribe me"
+}
