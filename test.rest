@@ -2,3 +2,12 @@
 
 ###
 GET {{url}}/quotes
+
+
+###
+POST {{url}}/subscribe
+Content-Type: application/json
+
+{
+   "email": "metoo@me.com"
+}

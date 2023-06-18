@@ -20,16 +20,16 @@ provider:
         - Effect: Allow
           Action: s3:GetObject
           Resource: arn:aws:s3:::${self:custom.bucketName}/*
-        # - Effect: Allow
-        #   Action:
-        #     - dynamodb:Query
-        #     - dynamodb:Scan
-        #     - dynamodb:GetItem
-        #     - dynamodb:PutItem
-        #     - dynamodb:UpdateItem
-        #     - dynamodb:DeleteItem
-        #   Resource:
-        #     - Fn::GetAtt: [UsersTable, Arn]
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource:
+            - Fn::GetAtt: [UsersTable, Arn]
   environment:
     REGION: ${self:custom.region}
     QUOTES_BUCKET: ${self:custom.bucketName}
@@ -38,22 +38,31 @@ provider:
 functions:
   quotes:
     handler: handler/getQuotes.getQuotes
-    description: get quotes.json object from s3
+    description: get quotes.json object from S3
     events:
       - http:
           path: quotes
           method: get
           cors: true
-# resources:
-#   Resources:
-#     UsersTable:
-#       Type: AWS::DynamoDB::Table
-#       Properties:
-#         AttributeDefinitions:
-#           - AttributeName: userId
-#             AttributeType: S
-#         KeySchema:
-#           - AttributeName: userId
-#             KeyType: HASH
-#         BillingMode: PAY_PER_REQUEST
-#         TableName: ${self:custom.tableName}
+  subscribe:
+    handler: handler/subscribeUser.subscribeUser
+    description: store user data in DynamoDB
+    events:
+      - http:
+          path: subscribe
+          method: post
+          cors: true
+
+resources:
+  Resources:
+    UsersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        TableName: ${self:custom.tableName}
