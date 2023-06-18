@@ -2,44 +2,58 @@ service: sls-email-subscribe
 frameworkVersion: '3'
 
 custom:
+  region: ${self:provider.region}
+  bucketName: quote-bucket-repo
   tableName: 'users-table-${sls:stage}'
 
 provider:
   name: aws
-  profile: serverelssUser
+  profile: serverlessUser
   runtime: nodejs18.x
+  region: 'us-east-1'
+  stage: ${opt:stage, 'dev'}
+
+  # Lambda function's IAM Roles
   iam:
     role:
       statements:
         - Effect: Allow
-          Action:
-            - dynamodb:Query
-            - dynamodb:Scan
-            - dynamodb:GetItem
-            - dynamodb:PutItem
-            - dynamodb:UpdateItem
-            - dynamodb:DeleteItem
-          Resource:
-            - Fn::GetAtt: [UsersTable, Arn]
+          Action: s3:GetObject
+          Resource: arn:aws:s3:::${self:custom.bucketName}/*
+        # - Effect: Allow
+        #   Action:
+        #     - dynamodb:Query
+        #     - dynamodb:Scan
+        #     - dynamodb:GetItem
+        #     - dynamodb:PutItem
+        #     - dynamodb:UpdateItem
+        #     - dynamodb:DeleteItem
+        #   Resource:
+        #     - Fn::GetAtt: [UsersTable, Arn]
   environment:
+    REGION: ${self:custom.region}
+    QUOTES_BUCKET: ${self:custom.bucketName}
     USERS_TABLE: ${self:custom.tableName}
 
 functions:
-  api:
-    handler: index.handler
+  quotes:
+    handler: handler/getQuotes.getQuotes
+    description: get quotes.json object from s3
     events:
-      - httpApi: '*'
-
-resources:
-  Resources:
-    UsersTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        AttributeDefinitions:
-          - AttributeName: userId
-            AttributeType: S
-        KeySchema:
-          - AttributeName: userId
-            KeyType: HASH
-        BillingMode: PAY_PER_REQUEST
-        TableName: ${self:custom.tableName}
+      - http:
+          path: quotes
+          method: get
+          cors: true
+# resources:
+#   Resources:
+#     UsersTable:
+#       Type: AWS::DynamoDB::Table
+#       Properties:
+#         AttributeDefinitions:
+#           - AttributeName: userId
+#             AttributeType: S
+#         KeySchema:
+#           - AttributeName: userId
+#             KeyType: HASH
+#         BillingMode: PAY_PER_REQUEST
+#         TableName: ${self:custom.tableName}

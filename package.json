@@ -1,7 +1,8 @@
 {
   "name": "sls-email-subscribe",
   "version": "1.0.0",
-  "description": "",
+  "description": "serverless backend for Email subscription",
+  "type": "module",
   "dependencies": {
     "express": "^4.18.2",
     "serverless-http": "^3.1.1"
