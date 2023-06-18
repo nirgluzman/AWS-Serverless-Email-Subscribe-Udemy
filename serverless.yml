@@ -18,6 +18,9 @@ provider:
     role:
       statements:
         - Effect: Allow
+          Action: SNS:Publish
+          Resource: !Ref QuotesMessages
+        - Effect: Allow
           Action: s3:GetObject
           Resource: arn:aws:s3:::${self:custom.bucketName}/*
         - Effect: Allow
@@ -55,6 +58,7 @@ functions:
 
 resources:
   Resources:
+    # DynamoDB Table
     UsersTable:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -66,3 +70,21 @@ resources:
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
         TableName: ${self:custom.tableName}
+
+    # SNS
+    QuotesMessages:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: quotes-messages-${self:provider.stage}
+    QuotesMessagesSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        TopicArn: !Ref QuotesMessages
+        Protocol: email
+        Endpoint: nir.gluzman@gmail.com
+        DeliveryPolicy:
+          healthyRetryPolicy:
+            numRetries: 20
+            minDelayTarget: 30
+            maxDelayTarget: 600
+            backoffFunction: exponential
