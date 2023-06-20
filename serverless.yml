@@ -35,6 +35,7 @@ provider:
             - Fn::GetAtt: [UsersTable, Arn]
   environment:
     REGION: ${self:custom.region}
+    SENDGRID_API_KEY: TBD
     QUOTES_BUCKET: ${self:custom.bucketName}
     USERS_TABLE: ${self:custom.tableName}
     SNS_TOPIC_ARN: !Ref QuotesMessages
@@ -62,6 +63,22 @@ functions:
     events:
       - http:
           path: static-mailer
+          method: post
+          cors: true
+  getSubscribers:
+    handler: handler/getSubscribers.getSubscribers
+    description: retrive all emails from DynamoDB
+    events:
+      - http:
+          path: get-subscribers
+          method: get
+          cors: true
+  sendEmail:
+    handler: handler/sendEmail.sendEmail
+    description: send Email using Twilio SendGrid
+    events:
+      - http:
+          path: send-email
           method: post
           cors: true
 

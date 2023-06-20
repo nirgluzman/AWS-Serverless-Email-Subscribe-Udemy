@@ -5,11 +5,11 @@ GET {{url}}/quotes
 
 
 ###
-POST {{url}}/subscribe
+POST {{url}}/subscribe  
 Content-Type: application/json
 
 {
-   "email": "metoo@me.com"
+   "email": "gluzman.nir@gmail.com"
 }
 
 ###
@@ -21,3 +21,9 @@ Content-Type: application/json
    "name": "nir",
    "message": "please subscribe me"
 }
+
+###
+GET {{url}}/get-subscribers
+
+###
+POST {{url}}/send-email
