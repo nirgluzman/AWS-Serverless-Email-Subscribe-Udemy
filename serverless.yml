@@ -82,6 +82,11 @@ functions:
           method: post
           cors: true
 
+      # Lambda to fire at 14:07 UTC everyday
+      # https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html
+      # https://www.serverless.com/framework/docs/providers/aws/events/schedule
+      - schedule: cron(07 14 * * ? *)
+
 resources:
   Resources:
     # DynamoDB Table

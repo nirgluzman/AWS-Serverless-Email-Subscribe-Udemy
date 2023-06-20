@@ -9,7 +9,7 @@ POST {{url}}/subscribe
 Content-Type: application/json
 
 {
-   "email": "gluzman.nir@gmail.com"
+   "email": "gluzman.idan@gmail.com"
 }
 
 ###
